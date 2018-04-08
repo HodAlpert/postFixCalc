@@ -21,7 +21,7 @@ struct bignum * pop(struct stack *s) {
     return poped;
 }
 struct bignum* calcMult(struct bignum* first,struct bignum* second) {
-    struct bignum **result =calloc(1, sizeof(bignum));
+    struct bignum **result =calloc(1, sizeof(long));
     struct bignum* multiplier = first;
     struct bignum* multiplied = second;
     if (compare(multiplier,multiplied) > 0 ) {
@@ -66,11 +66,10 @@ struct bignum* calcMult(struct bignum* first,struct bignum* second) {
         freeBignum(second);
 
     }
-
     freeBignum(multiplied);
-//    free(result);//TODO free result
-
-    return *result;
+    struct bignum* res = *result;
+    free(result);
+    return res;
 }
 struct bignum* calcDiv(struct bignum* first,struct bignum* second) {
     struct bignum **result = calloc(1,sizeof(long));
