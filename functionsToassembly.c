@@ -4,7 +4,7 @@
 ////
 //// Created by hod on 30/03/18.
 ////
-/*
+
 
 int compare(struct bignum *number1, struct bignum *number2) {//return |number1|-|number2| (sort-of)
     if(number1->numberOfDigits > number2->numberOfDigits){
@@ -19,7 +19,7 @@ int compare(struct bignum *number1, struct bignum *number2) {//return |number1|-
             return -1;
     }
     return 0;
-}*/
+}
 /*
 void subTwoArrays(long *bigger, const long *smaller, long max, long min,long *result) {
     long borrow=0;
