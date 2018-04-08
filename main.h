@@ -16,9 +16,16 @@ typedef struct bignum {
 struct stack {
     int size;
     struct bignum* firstBignum[1024];
-}stack;void addDigit(char c, struct bignum* number);
+}stack
+;void addDigit(char c, struct bignum* number);
 long getLongValue(const char* digits, long end, long begin);
 
+
+
+long *convertToArray(struct bignum* number);
+struct bignum* convertTObignum(long array[],long size);
+struct bignum* convertTObignumWithoutFree(long array[],long size);
+extern void addingTwoArrays(const long first[],const long second[], long firstLength, long secondLength, long result[]);
 struct stack;
 void push(struct bignum *number, struct stack* s);
 struct bignum *peek (struct stack *s);

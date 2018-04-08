@@ -10,10 +10,10 @@
 
 struct bignum* convertTObignum(long array[],long size){
     bool isNegative=array[0]==-1;
-    struct bignum* num=malloc(sizeof(*num));
+    struct bignum* num=calloc(1,sizeof(*num));
     if (num==NULL)
         exit(-1);
-    num->digit = malloc(sizeof(char)*size*9+1);
+    num->digit = calloc((size_t)size*9+1,sizeof(char));
     if(num->digit==NULL){
         free(num);
         exit(-1);
@@ -25,11 +25,13 @@ struct bignum* convertTObignum(long array[],long size){
         sprintf(temp, "%09ld", array[size-1-i]);
     }
     long i=0;
-    for(;i<size*9&&num->digit[i]=='0';i++){}
-    num->numberOfDigits= (long) strlen(num->digit+i);
+    for(;i<size*9&&num->digit[i]=='0';i++){}// number of '0' in the beggining of the string
+    long k=0;
+    for(;(k<size*9)&&(num->digit[k]>=48&&num->digit[k]<=57);k++){}// length of string
+    num->numberOfDigits= k-i;
     if(num->numberOfDigits==0)
         i--;
-    char*newdigit =malloc(sizeof(char)*num->numberOfDigits+1);
+    char*newdigit =calloc((size_t)num->numberOfDigits+1,sizeof(char));
     if(newdigit==NULL){
         exit(-1);
     }
@@ -50,10 +52,10 @@ struct bignum* convertTObignum(long array[],long size){
 }
 struct bignum* convertTObignumWithoutFree(long array[],long size){
     bool isNegative=array[0]==-1;
-    struct bignum* num=malloc(sizeof(*num));
+    struct bignum* num=calloc(1,sizeof(*num));
     if (num==NULL)
         exit(-1);
-    num->digit = malloc(sizeof(char)*size*9+1);
+    num->digit = calloc((size_t)size*9+1,sizeof(char));
     if(num->digit==NULL){
         free(num);
         exit(-1);
@@ -66,16 +68,17 @@ struct bignum* convertTObignumWithoutFree(long array[],long size){
     }
     long i=0;
     for(;i<size*9&&num->digit[i]=='0';i++){}
-    num->numberOfDigits= (long) strlen(num->digit+i);
+    long k=0;
+    for(;(k<size*9)&&(num->digit[k]>=48&&num->digit[k]<=57);k++){}// length of string
+    num->numberOfDigits= k-i;
     if(num->numberOfDigits==0)
         i--;
-    char*newdigit =malloc(sizeof(char)*num->numberOfDigits+1);
+    char*newdigit =calloc((size_t)num->numberOfDigits+1,sizeof(char));
     if(newdigit==NULL){
         exit(-1);
     }
     for(long j = 0;num->digit[i+j]!='\0';j++){
         newdigit[j]=num->digit[i+j];
-        newdigit[j+1]='\0';
     }
     free(num->digit);
     num->digit=newdigit;
@@ -89,30 +92,7 @@ struct bignum* convertTObignumWithoutFree(long array[],long size){
 
 }
 
-bool isGE(const long* first,const long* second, long firstSize, long secondSize){
-    long min=firstSize;
-    if(firstSize>secondSize){
-        for(long i=firstSize;i>secondSize;i--){
-            if(first[i]>0)
-                return true;
-        }
-        min=secondSize;
-    }
-    else if (secondSize>firstSize){
-        for(long i=secondSize;i>firstSize;i--){
-            if(second[i]>0)
-                return false;
-        }
-    }
 
-    for(;min>0;min--){
-        if(first[min-1]>second[min-1])
-            return true;
-        else if(second[min-1]>first[min-1])
-            return false;
-    }
-    return false;
-}
 long getLongValue(const char* digits, long end, long begin){
     long ans=0;
     for(;begin<=end;begin++){
@@ -148,7 +128,7 @@ void addDigit(char c, struct bignum* number) {
     if(number->numberOfDigits==number->capacity-1){
         number->capacity= number->capacity+MAX_SIZE;
         char* newNumber;
-        newNumber=(char*) malloc(sizeof(char)*(number->capacity));
+        newNumber=(char*) calloc((size_t)number->capacity,sizeof(char));
         if(newNumber==NULL)
             exit(-1);
         char*j= newNumber;
@@ -277,7 +257,7 @@ void freeStack(struct stack *s) {
     for (struct bignum** number=s->firstBignum;number<s->firstBignum+s->size;number++){
         freeBignum(*number);
     }
-    free(s);
+    s->size=0;
 }
 
 void minimizeBignumDigits(struct bignum *number) {
@@ -286,7 +266,7 @@ void minimizeBignumDigits(struct bignum *number) {
     if (i==number->numberOfDigits)
         i--;
     number->numberOfDigits=number->numberOfDigits-i;
-    char*newdigit =malloc(sizeof(char)*number->numberOfDigits);
+    char*newdigit =calloc((size_t)number->numberOfDigits,sizeof(char));
     if(newdigit==NULL)
         exit(-1);
     for(long j = 0;j<number->numberOfDigits+i;j++){

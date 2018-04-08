@@ -19,10 +19,9 @@ struct bignum * pop(struct stack *s) {
     struct bignum *poped = peek(s);
     s->size --;
     return poped;
-
 }
 struct bignum* calcMult(struct bignum* first,struct bignum* second) {
-    struct bignum **result =calloc(1, sizeof(long));
+    struct bignum **result =calloc(1, sizeof(bignum));
     struct bignum* multiplier = first;
     struct bignum* multiplied = second;
     if (compare(multiplier,multiplied) > 0 ) {
@@ -58,15 +57,18 @@ struct bignum* calcMult(struct bignum* first,struct bignum* second) {
             *result = convertTObignumWithoutFree(resultArr, resultSize+1);
             ((*result)->sign) = -1;
         }
+        freeBignum(factorPTR);
         free(factor);
         freeBignum(*multiplierPTR);
         free(multiplierPTR); //free multiplier
         free(resultArr);
+        freeBignum(first);
+        freeBignum(second);
 
     }
 
     freeBignum(multiplied);
-
+//    free(result);//TODO free result
 
     return *result;
 }
@@ -128,8 +130,7 @@ struct bignum* calcSub(struct bignum* first,struct bignum* second) {
     return answer;
 }
 
-void execute_p(struct stack *s) {//TODO remove
-//    printNumber(peek(s));
+void execute_p(struct stack *s) {
     if (peek(s)->sign ==-2) {
         printf("Error: division by zero!\n");
         struct bignum *result = pop(s);
@@ -142,7 +143,6 @@ void execute_p(struct stack *s) {//TODO remove
 }
 void execute_c(struct stack *s) {
     freeStack(s);
-
 }
 
 enum state{number,notNumber};
@@ -152,7 +152,7 @@ int main() {
     struct bignum *first;
     struct bignum *second;
     enum state currState = notNumber;
-    struct stack *stack= malloc(sizeof(struct stack));
+    struct stack *stack= calloc(1,sizeof(struct stack));
     if (stack==NULL)
         return -1;
     char c;
@@ -164,12 +164,56 @@ int main() {
                     case '0'...'9':
                         addDigit(c, currbignum);
                         break;
+                    case '*':
+                        minimizeBignumDigits(currbignum);
+                        push(currbignum, stack);
+                        first= pop(stack);
+                        second= pop(stack);
+                        push(calcMult(first,second),stack);
+                        currState = notNumber;
+                        break;
+                    case '/':
+                        minimizeBignumDigits(currbignum);
+                        push(currbignum, stack);
+                        first= pop(stack);
+                        second= pop(stack);
+                        struct bignum *result = calcDiv(first,second);
+                        push(result,stack);
+                        currState = notNumber;
+                        break;
+                    case '+':
+                        minimizeBignumDigits(currbignum);
+                        push(currbignum, stack);
+                        first= pop(stack);
+                        second= pop(stack);
+                        push(calcSum(first,second),stack);
+                        currState = notNumber;
+                        break;
+                    case '-':
+                        minimizeBignumDigits(currbignum);
+                        push(currbignum, stack);
+                        first= pop(stack);
+                        second= pop(stack);
+                        push(calcSub(first,second),stack);
+                        currState = notNumber;
+                        break;
+                    case 'p':
+                        minimizeBignumDigits(currbignum);
+                        push(currbignum, stack);
+                        execute_p(stack);
+                        currState = notNumber;
+                        break;
+                    case 'c':
+                        minimizeBignumDigits(currbignum);
+                        push(currbignum, stack);
+                        execute_c(stack);
+                        currState = notNumber;
+                        break;
                     default:
                         addDigit('\0',currbignum);
                         minimizeBignumDigits(currbignum);
                         push(currbignum, stack);
                         currState = notNumber;
-
                 }
                 break;
             case notNumber:
@@ -202,10 +246,10 @@ int main() {
                         execute_c(stack);
                         break;
                     case '0'...'9':
-                        currbignum=malloc(sizeof(*currbignum));
+                        currbignum=calloc(1,sizeof(*currbignum));
                         if (currbignum==NULL)
                             return -1;
-                        currbignum->digit = malloc(sizeof(char)*MAX_SIZE);
+                        currbignum->digit = calloc(MAX_SIZE,sizeof(char));
                         if (currbignum->digit==NULL){
                             free(currbignum);
                             return -1;
@@ -217,10 +261,10 @@ int main() {
                         currState = number;
                         break;
                     case '_':
-                        currbignum=malloc(sizeof(*currbignum));
+                        currbignum=calloc(1,sizeof(*currbignum));
                         if (currbignum==NULL)
                             return -1;
-                        currbignum->digit = malloc(sizeof(char)*MAX_SIZE);
+                        currbignum->digit = calloc(MAX_SIZE,sizeof(char));
                         if (currbignum->digit==NULL){
                             free(currbignum);
                             return -1;
@@ -234,6 +278,8 @@ int main() {
                 }
         }
     }
+    freeStack(stack);
+    free(stack);
 }
 
 
