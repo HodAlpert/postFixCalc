@@ -80,7 +80,7 @@ section .text
     global arrangeCarry
     global addingTwoArrays
     global subTwoArrays
-    extern compare
+    global compare
     global recCalcMult
     global recCalcDiv
     
@@ -254,7 +254,7 @@ subTwoArrays:
         mov rsp, rbp ; move RBP to RSP
         pop rbp ; restore old RBP
         ret
-     
+
 recCalcMult:
     push rbp ; backup RBP
     mov rbp, rsp
