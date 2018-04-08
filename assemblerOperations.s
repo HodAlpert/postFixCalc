@@ -201,6 +201,7 @@ subTwoArrays:
     mov qword [rbp-56], 0   ; rbp-56 = 0 (current borrow)
     mov qword [rbp-64], 0   ; rbp-64 = 0 (long i = 0->for the loop)
     mov rcx, qword [rbp-32] ; setting rcx with the value of the counter
+
     .loop:
         mov rdi, qword [rbp-64] ; copying current i
         mov rax, qword [rbp-16] ; copying pointer to bigger array
