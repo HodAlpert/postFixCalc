@@ -80,7 +80,7 @@ section .text
     global arrangeCarry
     global addingTwoArrays
     global subTwoArrays
-    global compare
+    extern compare
     global recCalcMult
     global recCalcDiv
     
