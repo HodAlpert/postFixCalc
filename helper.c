@@ -262,19 +262,15 @@ void freeStack(struct stack *s) {
 
 void minimizeBignumDigits(struct bignum *number) {
     long i=0;
-    for(;i<number->numberOfDigits&&number->digit[i]=='0';i++){}
+    for(;i<number->numberOfDigits*9&&number->digit[i]=='0';i++){}
     if (i==number->numberOfDigits)
         i--;
-    long k=0;
-    for(;(k<number->numberOfDigits)&&(number->digit[k]>=48&&number->digit[k]<=57);k++){}// length of string
-    number->numberOfDigits= k-i;
-
-    char*newdigit =calloc((size_t)number->numberOfDigits+1,sizeof(char));
+    number->numberOfDigits=number->numberOfDigits-i;
+    char*newdigit =calloc((size_t)number->numberOfDigits+2,sizeof(char));
     if(newdigit==NULL)
         exit(-1);
-    for(long j = 0;j<number->numberOfDigits;j++){
+    for(long j = 0;j<number->numberOfDigits+i;j++){
         newdigit[j]=number->digit[i+j];
-        newdigit[j+1]='\0';
     }
     free(number->digit);
     number->digit=newdigit;
