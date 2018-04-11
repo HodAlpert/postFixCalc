@@ -44,7 +44,7 @@ struct bignum* calcMult(struct bignum* first,struct bignum* second) {
         (*result) ->sign =sign;
     }
     else{
-        struct bignum **multiplierPTR = calloc(1, sizeof(long)); /////
+        struct bignum **multiplierPTR = calloc(1, sizeof(long));
         *multiplierPTR = multiplier;
 
         long *factor = calloc(2,sizeof(long));
