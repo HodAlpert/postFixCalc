@@ -152,6 +152,7 @@ void execute_c(struct stack *s) {
 enum state{number,notNumber};
 
 int main() {
+    //
     struct bignum* currbignum;
     struct bignum *first;
     struct bignum *second;
