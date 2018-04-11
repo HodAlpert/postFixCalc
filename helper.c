@@ -234,10 +234,10 @@ int isEqualZeroOrSign(struct bignum** multiplier,struct bignum** multiplied, int
     if (con ==-1){
         con = ((*multiplied)->sign) * ((*multiplier)->sign);
             multipliedArr[0]=1;
-            *multiplied = convertTObignumWithoutFree(multipliedArr,multipliedNewSize+1);
+            *multiplied = convertTObignum(multipliedArr,multipliedNewSize+1);
             (*multiplied)->sign = 1;
             multiplierArr[0]=1;
-            *multiplier = convertTObignumWithoutFree(multiplierArr,multiplierNewSize+1);
+            *multiplier = convertTObignum(multiplierArr,multiplierNewSize+1);
             (*multiplier)->sign = 1;
 
     }
@@ -258,6 +258,8 @@ int isEqualZeroOrSignRes(struct bignum **resultToCheck) {
 }
 struct bignum* returnZeroArray(){
     long *resultArr =  calloc(2, sizeof(long));
+    if(resultArr==NULL)
+        exit(-1);
     resultArr[0] = 1;
     resultArr[1] = 0;
     return convertTObignum(resultArr,2);
@@ -302,18 +304,4 @@ void minimizeBignumDigits(struct bignum *number) {
     number->digit=newdigit;
 }
 
-bool testExist(struct bignum *first, struct bignum *second, struct stack *stack) {
-    bool output = 0;
-    if (first->sign == -3){
-        freeBignum(first);
-        freeBignum(second);
-    }
-    else if (second->sign == -3){
-        push(first,stack);
-        freeBignum(second);
-    }
-    else
-        output = 1;
 
-    return output;
-}

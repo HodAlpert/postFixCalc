@@ -3,6 +3,7 @@
 #include <limits.h>
 #include <stdbool.h>
 #include <string.h>
+#include <stdlib.h>
 #include "main.h"
 
 #define MAX_SIZE 20
@@ -29,9 +30,10 @@ struct bignum * pop(struct stack *s) {
 }
 struct bignum* calcMult(struct bignum* first,struct bignum* second) {
     struct bignum **result =calloc(1, sizeof(long));
+    if(result==NULL)
+        exit(-1);
     struct bignum* multiplier = first;
     struct bignum* multiplied = second;
-
     if (compare(multiplier,multiplied) > 0 ) {
         struct bignum* tmp = multiplied;
         multiplied = multiplier;
@@ -45,21 +47,24 @@ struct bignum* calcMult(struct bignum* first,struct bignum* second) {
     }
     else{
         struct bignum **multiplierPTR = calloc(1, sizeof(long));
+        if(multiplierPTR==NULL)
+            exit(-1);
         *multiplierPTR = multiplier;
 
         long *factor = calloc(2,sizeof(long));
+        if(factor==NULL)
+            exit(-1);
         factor[0] = 1;
         factor[1] = 1;
 
         struct bignum* factorPTR = convertTObignumWithoutFree(factor, 2);
         long *resultArr = calloc(2,sizeof(long));
+        if(resultArr==NULL)
+            exit(-1);
         resultArr[0] = 1;
-
         *result = convertTObignumWithoutFree(resultArr, 2);
         recCalcMult(multiplierPTR, multiplied, factorPTR, result);
         ((*result)->sign) = 1;
-
-
         if (sign == -1){
             resultArr = convertToArray(*result);
             resultArr[0] = -1;
@@ -74,6 +79,7 @@ struct bignum* calcMult(struct bignum* first,struct bignum* second) {
         free(resultArr);
         freeBignum(first);
         freeBignum(second);
+
     }
     freeBignum(multiplied);
     struct bignum* res = *result;
@@ -84,6 +90,8 @@ struct bignum* calcMult(struct bignum* first,struct bignum* second) {
 
 struct bignum* calcDiv(struct bignum* first, struct bignum* second) {
     struct bignum **result = calloc(1,sizeof(long));
+    if(result==NULL)
+        exit(-1);
     struct bignum* toDivide = second;
     struct bignum* divisor = first;
 
@@ -95,23 +103,26 @@ struct bignum* calcDiv(struct bignum* first, struct bignum* second) {
     }
     else{
         struct bignum **toDividePTR = calloc(1, sizeof(long));
+        if(toDividePTR==NULL)
+            exit(-1);
         *toDividePTR = toDivide;
-
         long *factor = calloc(2,sizeof(long));
+        if(factor==NULL)
+            exit(-1);
         factor[0] = 1;
         factor[1] = 1;
 
         struct bignum* factorPTR = convertTObignumWithoutFree(factor, 2);
         long *resultArr = calloc(2,sizeof(long));
+        if(resultArr==NULL)
+            exit(-1);
         resultArr[0] = 1;
-
         *result = convertTObignumWithoutFree(resultArr, 2);
         recCalcDiv(toDividePTR, divisor, factorPTR, result);
 
         if (isEqualZeroOrSignRes(result) == 0)
             sign = 0;
         ((*result)->sign) = sign;
-
         if (sign == -1){
             resultArr = convertToArray(*result);
             resultArr[0] = -1;
@@ -127,6 +138,7 @@ struct bignum* calcDiv(struct bignum* first, struct bignum* second) {
         freeBignum(first);
         freeBignum(second);
     }
+
     freeBignum(divisor);
     struct bignum* res = *result;
     free(result);
@@ -166,7 +178,6 @@ void execute_c(struct stack *s) {
 enum state{number,notNumber};
 
 int main() {
-    //
     struct bignum* currbignum;
     struct bignum *first;
     struct bignum *second;
@@ -188,46 +199,40 @@ int main() {
                         push(currbignum, stack);
                         first= pop(stack);
                         second= pop(stack);
-                        if (testExist(first, second, stack)){
-                            push(calcMult(first,second),stack);
-                            currState = notNumber;
-                        }
+                        push(calcMult(first,second),stack);
+                        currState = notNumber;
                         break;
                     case '/':
                         minimizeBignumDigits(currbignum);
                         push(currbignum, stack);
                         first= pop(stack);
                         second= pop(stack);
-                        if (testExist(first, second, stack)) {
-                            struct bignum *result = calcDiv(first,second);
-                            if (result->sign ==-2) {
-                                printf("Error: division by zero!\n");
-                                freeBignum(result);
-                            }
-                            else {
-                                push(result, stack);
-                            }
+                        struct bignum *result = calcDiv(first,second);
+                        if (result->sign ==-2) {
+                            printf("Error: division by zero!\n");
+                            freeBignum(result);
                         }
+                        else {
+                            push(result, stack);
+                        }
+                        push(result,stack);
+                        currState = notNumber;
                         break;
                     case '+':
                         minimizeBignumDigits(currbignum);
                         push(currbignum, stack);
                         first= pop(stack);
                         second= pop(stack);
-                        if (testExist(first, second, stack)) {
-                            push(calcSum(first,second),stack);
-                            currState = notNumber;
-                        }
+                        push(calcSum(first,second),stack);
+                        currState = notNumber;
                         break;
                     case '-':
                         minimizeBignumDigits(currbignum);
                         push(currbignum, stack);
                         first= pop(stack);
                         second= pop(stack);
-                        if (testExist(first, second, stack)) {
-                            push(calcSub(first, second), stack);
-                            currState = notNumber;
-                        }
+                        push(calcSub(first,second),stack);
+                        currState = notNumber;
                         break;
                     case 'p':
                         minimizeBignumDigits(currbignum);
@@ -253,37 +258,23 @@ int main() {
                     case '*':
                         first= pop(stack);
                         second= pop(stack);
-                        if (testExist(first, second, stack)) {
-                            push(calcMult(first,second),stack);
-                        }
+                        push(calcMult(first,second),stack);
                         break;
                     case '/':
                         first= pop(stack);
                         second= pop(stack);
-                        if (testExist(first, second, stack)) {
-                            struct bignum *result = calcDiv(first,second);
-                            if (result->sign ==-2) {
-                                printf("Error: division by zero!\n");
-                                freeBignum(result);
-                            }
-                            else {
-                                push(result, stack);
-                            }
-                        }
+                        struct bignum *result = calcDiv(first,second);
+                        push(result,stack);
                         break;
                     case '+':
                         first= pop(stack);
                         second= pop(stack);
-                        if (testExist(first, second, stack)) {
-                            push(calcSum(first,second),stack);
-                        }
+                        push(calcSum(first,second),stack);
                         break;
                     case '-':
                         first= pop(stack);
                         second= pop(stack);
-                        if (testExist(first, second, stack)) {
-                            push(calcSub(first, second), stack);
-                        }
+                        push(calcSub(first,second),stack);
                         break;
                     case 'p':
                         execute_p(stack);
@@ -327,5 +318,3 @@ int main() {
     freeStack(stack);
     free(stack);
 }
-
-
