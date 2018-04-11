@@ -56,5 +56,6 @@ extern void freeBignum(struct bignum *number);
 void freeStack(struct stack* s);
 void minimizeBignumDigits(struct bignum *number);
 bool testExist(struct bignum *first, struct bignum *second, struct stack *stack);
+int isEqualZeroOrSignRes(struct bignum **resultToCheck);
 
 #endif //POSTFIXCALC_MAIN_H

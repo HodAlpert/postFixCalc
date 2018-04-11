@@ -31,6 +31,7 @@ struct bignum* calcMult(struct bignum* first,struct bignum* second) {
     struct bignum **result =calloc(1, sizeof(long));
     struct bignum* multiplier = first;
     struct bignum* multiplied = second;
+
     if (compare(multiplier,multiplied) > 0 ) {
         struct bignum* tmp = multiplied;
         multiplied = multiplier;
@@ -43,7 +44,6 @@ struct bignum* calcMult(struct bignum* first,struct bignum* second) {
         (*result) ->sign =sign;
     }
     else{
-
         struct bignum **multiplierPTR = calloc(1, sizeof(long)); /////
         *multiplierPTR = multiplier;
 
@@ -54,9 +54,12 @@ struct bignum* calcMult(struct bignum* first,struct bignum* second) {
         struct bignum* factorPTR = convertTObignumWithoutFree(factor, 2);
         long *resultArr = calloc(2,sizeof(long));
         resultArr[0] = 1;
+
         *result = convertTObignumWithoutFree(resultArr, 2);
         recCalcMult(multiplierPTR, multiplied, factorPTR, result);
         ((*result)->sign) = 1;
+
+
         if (sign == -1){
             resultArr = convertToArray(*result);
             resultArr[0] = -1;
@@ -71,14 +74,15 @@ struct bignum* calcMult(struct bignum* first,struct bignum* second) {
         free(resultArr);
         freeBignum(first);
         freeBignum(second);
-
     }
     freeBignum(multiplied);
     struct bignum* res = *result;
     free(result);
     return res;
 }
-struct bignum* calcDiv(struct bignum* first,struct bignum* second) {
+
+
+struct bignum* calcDiv(struct bignum* first, struct bignum* second) {
     struct bignum **result = calloc(1,sizeof(long));
     struct bignum* toDivide = second;
     struct bignum* divisor = first;
@@ -92,6 +96,7 @@ struct bignum* calcDiv(struct bignum* first,struct bignum* second) {
     else{
         struct bignum **toDividePTR = calloc(1, sizeof(long));
         *toDividePTR = toDivide;
+
         long *factor = calloc(2,sizeof(long));
         factor[0] = 1;
         factor[1] = 1;
@@ -99,11 +104,14 @@ struct bignum* calcDiv(struct bignum* first,struct bignum* second) {
         struct bignum* factorPTR = convertTObignumWithoutFree(factor, 2);
         long *resultArr = calloc(2,sizeof(long));
         resultArr[0] = 1;
+
         *result = convertTObignumWithoutFree(resultArr, 2);
         recCalcDiv(toDividePTR, divisor, factorPTR, result);
-        if (isEqualZeroOrSign(result,result,0) == 0)
+
+        if (isEqualZeroOrSignRes(result) == 0)
             sign = 0;
         ((*result)->sign) = sign;
+
         if (sign == -1){
             resultArr = convertToArray(*result);
             resultArr[0] = -1;
@@ -111,15 +119,22 @@ struct bignum* calcDiv(struct bignum* first,struct bignum* second) {
             *result = convertTObignumWithoutFree(resultArr, resultSize+1);
             ((*result)->sign) = -1;
         }
+        freeBignum(factorPTR);
         free(factor);
         freeBignum(*toDividePTR);
         free(toDividePTR);
         free(resultArr);
+        freeBignum(first);
+        freeBignum(second);
     }
-
     freeBignum(divisor);
-    return *result;
+    struct bignum* res = *result;
+    free(result);
+    return res;
 }
+
+
+
 struct bignum* calcSum(struct bignum* first,struct bignum* second) {
     struct bignum* answer = calcSumWithoutFree(first,second);
     freeBignum(first);
@@ -133,14 +148,13 @@ struct bignum* calcSub(struct bignum* first,struct bignum* second) {
     return answer;
 }
 
-bool testExist(struct bignum *first, struct bignum *second, struct stack *stack);
-
 void execute_p(struct stack *s) {
+    struct bignum *toPrint = peek(s);
     if (peek(s)->sign == -3){
-        printf("%s\n","Nothing to show");
+        freeBignum(toPrint);
     }
     else {
-        if(peek(s)->sign==-1)
+        if(toPrint->sign==-1)
             putchar('-');
         printf("%s\n",peek(s)->digit);
     }
