@@ -49,13 +49,12 @@ struct bignum* returnZeroArray();
 struct bignum* convertTObignum(long array[],long size);
 struct bignum* convertTObignumWithoutFree(long array[],long size);
 long *convertToArray(struct bignum* number);
-extern int compare(struct bignum *number1, struct bignum *number2);
+int compare(struct bignum *number1, struct bignum *number2);
 int isEqualZeroOrSign(struct bignum** multiplier,struct bignum** multiplied, int multOrDiv );
 void negateNumber(struct bignum *number);
-void printNumber(struct bignum *number);
 extern void freeBignum(struct bignum *number);
 void freeStack(struct stack* s);
 void minimizeBignumDigits(struct bignum *number);
-bool isGE(const long* first,const long* second, long firstSize, long secondSize);
+bool testExist(struct bignum *first, struct bignum *second, struct stack *stack);
 
 #endif //POSTFIXCALC_MAIN_H
