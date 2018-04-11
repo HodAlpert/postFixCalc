@@ -99,7 +99,7 @@ struct bignum* convertTObignumWithoutFree(long array[],long size){
     if (isNegative){
         num->sign=-1;
     }
-
+    //free(array);
 
     return num;
 
@@ -223,8 +223,8 @@ int isEqualZeroOrSign(struct bignum** multiplier,struct bignum** multiplied, int
             }
         }
 
-    if (multOrDiv == 1 && con2 == 0 && con==0) {
-        con = -2;
+        if (multOrDiv == 1 && con2 == 0 && con==0) {
+            con = -2;
         }
     }
     if (((*multiplier)->sign == -2) ||((*multiplied)->sign == -2)){
@@ -233,33 +233,22 @@ int isEqualZeroOrSign(struct bignum** multiplier,struct bignum** multiplied, int
 
     if (con ==-1){
         con = ((*multiplied)->sign) * ((*multiplier)->sign);
-            multipliedArr[0]=1;
-            *multiplied = convertTObignum(multipliedArr,multipliedNewSize+1);
-            (*multiplied)->sign = 1;
-            multiplierArr[0]=1;
-            *multiplier = convertTObignum(multiplierArr,multiplierNewSize+1);
-            (*multiplier)->sign = 1;
+        multipliedArr[0]=1;
+        *multiplied = convertTObignum(multipliedArr,multipliedNewSize+1);
+        (*multiplied)->sign = 1;
+        multiplierArr[0]=1;
+        *multiplier = convertTObignum(multiplierArr,multiplierNewSize+1);
+        (*multiplier)->sign = 1;
 
     }
-    free(multiplierArr);
-    free(multipliedArr);
-    return con;
-}
-int isEqualZeroOrSignRes(struct bignum **resultToCheck) {
-    long size = (*resultToCheck)->numberOfDigits / 9 + 1;
-    long *resultArr = convertToArray(*resultToCheck);
-    int con = 0;
-    for (long i = 1; con != -1 && i <= size; i++) {
-        if (resultArr[i] != 0)
-            con = -1;
-    }
-    free(resultArr);
+    //free(multiplierArr);
+    //free(multipliedArr);
     return con;
 }
 struct bignum* returnZeroArray(){
     long *resultArr =  calloc(2, sizeof(long));
-    if(resultArr==NULL)
-        exit(-1);
+    // if(resultArr==NULL)
+    //     exit(-1);
     resultArr[0] = 1;
     resultArr[1] = 0;
     return convertTObignum(resultArr,2);
