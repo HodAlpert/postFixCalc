@@ -234,15 +234,26 @@ int isEqualZeroOrSign(struct bignum** multiplier,struct bignum** multiplied, int
     if (con ==-1){
         con = ((*multiplied)->sign) * ((*multiplier)->sign);
         multipliedArr[0]=1;
-        *multiplied = convertTObignum(multipliedArr,multipliedNewSize+1);
+        *multiplied = convertTObignumWithoutFree(multipliedArr,multipliedNewSize+1);
         (*multiplied)->sign = 1;
         multiplierArr[0]=1;
-        *multiplier = convertTObignum(multiplierArr,multiplierNewSize+1);
+        *multiplier = convertTObignumWithoutFree(multiplierArr,multiplierNewSize+1);
         (*multiplier)->sign = 1;
 
     }
-    //free(multiplierArr);
-    //free(multipliedArr);
+    free(multiplierArr);
+    free(multipliedArr);
+    return con;
+}
+int isEqualZeroOrSignRes(struct bignum **resultToCheck) {
+    long size = (*resultToCheck)->numberOfDigits / 9 + 1;
+    long *resultArr = convertToArray(*resultToCheck);
+    int con = 0;
+    for (long i = 1; con != -1 && i <= size; i++) {
+        if (resultArr[i] != 0)
+            con = -1;
+    }
+    free(resultArr);
     return con;
 }
 struct bignum* returnZeroArray(){

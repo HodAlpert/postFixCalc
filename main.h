@@ -55,5 +55,6 @@ void negateNumber(struct bignum *number);
 extern void freeBignum(struct bignum *number);
 void freeStack(struct stack* s);
 void minimizeBignumDigits(struct bignum *number);
+int isEqualZeroOrSignRes(struct bignum **resultToCheck);
 
 #endif //POSTFIXCALC_MAIN_H

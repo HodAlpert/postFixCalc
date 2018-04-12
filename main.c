@@ -111,7 +111,7 @@ struct bignum* calcDiv(struct bignum* first,struct bignum* second) {
         resultArr[0] = 1;
         *result = convertTObignumWithoutFree(resultArr, 2);
         recCalcDiv(toDividePTR, divisor, factorPTR, result);
-        if (isEqualZeroOrSign(result,result,0) == 0)
+        if (isEqualZeroOrSignRes(result) == 0)
             sign = 0;
         ((*result)->sign) = sign;
         if (sign == -1){
@@ -151,14 +151,10 @@ struct bignum* calcSub(struct bignum* first,struct bignum* second) {
 }
 
 void execute_p(struct stack *s) {
-    if (peek(s)->sign ==-2) {
-        struct bignum *result = pop(s);
-        freeBignum(result);
-    } else{
-        if(peek(s)->sign==-1)
-            putchar('-');
-        printf("%s\n",peek(s)->digit);
-    }
+    if(peek(s)->sign==-1)
+        putchar('-');
+    printf("%s\n",peek(s)->digit);
+
 }
 void execute_c(struct stack *s) {
     freeStack(s);
@@ -197,7 +193,12 @@ int main() {
                         first= pop(stack);
                         second= pop(stack);
                         struct bignum *result = calcDiv(first,second);
-                        push(result,stack);
+                        if (result->sign ==-2) {
+                            printf("Error: division by zero!\n");
+                            freeBignum(result);
+                        }else{
+                            push(result,stack);
+                        }
                         currState = notNumber;
                         break;
                     case '+':
@@ -246,7 +247,13 @@ int main() {
                         first= pop(stack);
                         second= pop(stack);
                         struct bignum *result = calcDiv(first,second);
-                        push(result,stack);
+                        if (result->sign ==-2) {
+                            printf("Error: division by zero!\n");
+                            freeBignum(result);
+                        }
+                        else{
+                            push(result,stack);
+                        }
                         break;
                     case '+':
                         first= pop(stack);
